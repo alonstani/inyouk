@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        form {
+            text-align: center;
+            margin: 20px 0;
+        }
+        input[type="text"] {
+            padding: 8px;
+            margin: 10px;
+            font-size: 16px;
+            width: 200px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        .weather-info {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .winter-facts {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Weather Application</h1>
+        <form method="POST">
+            <input type="text" name="city" placeholder="Enter City" required>
+            <input type="text" name="country" placeholder="Enter Country" required>
+            <button type="submit">Get Weather</button>
+        </form>
+
+        {% if weather %}
+            <div class="weather-info">
+                <h2>Weather in {{ city }}, {{ country }}</h2>
+                <p><strong>Temperature:</strong> {{ weather.temperature }}°C</p>
+                <p><strong>Description:</strong> {{ weather.description }}</p>
+                <p><strong>Humidity:</strong> {{ weather.humidity }}%</p>
+                <p><strong>Wind Speed:</strong> {{ weather.wind_speed }} m/s</p>
+            </div>
+        {% elif city and country %}
+            <p>Weather data could not be found for {{ city }}, {{ country }}. Please check the city and country name.</p>
+        {% endif %}
+
+        <div class="winter-facts">
+            <h3>Winter Facts:</h3>
+            <ul>
+                {% for fact in winter_facts %}
+                    <li>{{ fact }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
+
+
