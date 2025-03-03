@@ -1,62 +1,49 @@
-from flask import Flask, render_template, request
 import requests
 
-app = Flask(__name__)
-
 # OpenWeatherMap API Key
-API_KEY = 'your_openweathermap_api_key'
+API_KEY = '9051261a9584b0760f796d0c04f55a6f'  # Replace with your actual API key
 
-# Winter Facts
-winter_facts = [
-    "The coldest temperature ever recorded on Earth was −128.6°F (−89.2°C) in Antarctica.",
-    "Winter is the best season to go skiing or snowboarding.",
-    "Snowflakes come in many different shapes, but they are all six-sided!",
-    "Polar bears' fur is not white, but transparent. It looks white because it reflects the snow.",
-    "In many places, winter lasts for about three months from December to February."
-]
-
-@app.route('/', methods=['GET', 'POST'])
-def index():
-    weather = None
-    city = None
-    country = None
-
-    if request.method == 'POST':
-        # Get the city and country from the form
-        city = request.form.get('city')
-        country = request.form.get('country')
-        
-        # Fetch weather data from OpenWeatherMap API
-        if city and country:
-            weather = get_weather(city, country)
-        
-    return render_template('index.html', weather=weather, winter_facts=winter_facts, city=city, country=country)
-
+# Function to fetch weather data
 def get_weather(city, country):
-    # Make API request to OpenWeatherMap
+    # Construct the URL to call the OpenWeatherMap API
     url = f"http://api.openweathermap.org/data/2.5/weather?q={city},{country}&appid={API_KEY}&units=metric"
+    
+    # Make the request
     response = requests.get(url)
     
     if response.status_code == 200:
-        data = response.json()
+        data = response.json()  # Parse the response to JSON
         
-        # Extract relevant weather data
+        # Extract relevant data from the response
         main = data['main']
-        weather_description = data['weather'][0]['description']
-        temp = main['temp']
-        humidity = main['humidity']
-        wind_speed = data['wind']['speed']
+        weather = data['weather'][0]
+        wind = data['wind']
         
+        # Return weather details
         return {
-            'temperature': temp,
-            'description': weather_description,
-            'humidity': humidity,
-            'wind_speed': wind_speed
+            'temperature': main['temp'],
+            'description': weather['description'],
+            'humidity': main['humidity'],
+            'wind_speed': wind['speed']
         }
     else:
+        print(f"Error: {response.status_code}")
         return None
 
-if __name__ == '__main__':
-    app.run(debug=True)
+# Example usage
+city = input("Enter city: ")
+country = input("Enter country: ")
+
+weather = get_weather(city, country)
+
+if weather:
+    print(f"Weather in {city}, {country}:")
+    print(f"Temperature: {weather['temperature']}°C")
+    print(f"Description: {weather['description']}")
+    print(f"Humidity: {weather['humidity']}%")
+    print(f"Wind Speed: {weather['wind_speed']} m/s")
+else:
+    print("Could not fetch weather data.")
+
 
 

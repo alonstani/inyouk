@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: weather-app-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: weather-app
+  template:
+    metadata:
+      labels:
+        app: weather-app
+    spec:
+      containers:
+        - name: weather-app
+          image: alonstani/inyouk:latest # Replace with your image if it's different
+          ports:
+            - containerPort: 5000
+          env:
+            - name: WEATHER_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: weather-api-secret
+                  key: api-key
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: weather-app-service
+spec:
+  selector:
+    app: weather-app
+  ports:
+    - protocol: TCP
+      port: 80  # Expose on port 80 externally
+      targetPort: 5000  # Internal app port
+  type: LoadBalancer
